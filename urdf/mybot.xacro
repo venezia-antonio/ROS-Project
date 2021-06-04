@@ -1,0 +1,188 @@
+<?xml version='1.0'?>
+
+<robot name="myrobot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="cameraSize" value="0.05"/>
+  <xacro:property name="cameraMass" value="0.1"/>
+
+  <xacro:include filename="$(find diff_drive_bot)/urdf/mybot.gazebo" />
+  <xacro:include filename="$(find diff_drive_bot)/urdf/materials.xacro" />
+  <xacro:include filename="$(find diff_drive_bot)/urdf/macros.xacro" />
+
+  <!-- <link name="base_link"></link>
+  <joint name="base_link_to_base" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis" />
+    <origin rpy="0.0 0 0" xyz="0 0 0"/>
+  </joint> -->
+
+  <link name='chassis'>
+    <pose>0 0 0.1 0 0 0</pose>
+
+    <inertial>
+    <mass value="5" />
+    <!-- <origin xyz="-0.00412574 0.000222774 -0.115845" rpy="-1.5708 6.7993e-17 1.5737e-17" /> -->
+    <origin xyz="-0.00636873 0.00030011 0.0767722" rpy="0 0 0"/>
+    <inertia
+      ixx="6.49833" ixy="2.00692e-05"  ixz="0.0372481" iyy="8.37947" iyz="8.36157e-05" izz="8.2538"/>
+    </inertial>
+
+    <collision name='collision'>
+      <origin xyz="-0.00412574 0.000222774 -0.115845" rpy="-1.5708 6.7993e-17 1.5737e-17" />
+      <geometry>
+      <mesh filename="package://diff_drive_bot/meshes/base_1_supporto.stl" />
+      
+      </geometry>
+      <surface>
+        <friction>
+        <ode>
+          <mu>0</mu>
+          <mu2>0</mu2>
+          <slip1>1.0</slip1>
+          <slip2>1.0</slip2>
+        </ode>
+        </friction>
+      </surface>
+    </collision>
+
+    <visual name='chassis_visual'>
+    <origin xyz="-0.00412574 0.000222774 -0.115845" rpy="-1.5708 6.7993e-17 1.5737e-17" />
+    <geometry>
+    <mesh filename="package://diff_drive_bot/meshes/base_1_supporto.stl" />
+    </geometry>
+    </visual>
+    
+    
+  </link>
+ 
+  <link name="left_wheel">
+    <!--origin xyz="0.1 0.13 0.1" rpy="0 1.5707 1.5707"/-->
+    <collision name="collision">
+      <origin xyz="0 0 0.025" rpy="-3.14159 -0 0" />
+      <geometry>
+        <mesh filename="package://diff_drive_bot/meshes/wheel.stl" />
+        <!-- <cylinder radius="0.1" length="0.05"/> -->
+      </geometry>
+    </collision>
+    <visual name="left_wheel_visual">
+      <origin xyz="0 0 0.025" rpy="-3.14159 -0 0" />
+      <geometry>
+      <mesh filename="package://diff_drive_bot/meshes/wheel.stl" />
+        <!-- <cylinder radius="0.1" length="0.05"/> -->
+      </geometry>
+    </visual>
+    <inertial>
+      <origin xyz="-2.18305e-18 5.73556e-20 -3.46945e-18" rpy="0 0 0"/>
+      <mass value="3.98738" />
+      <inertia
+        ixx="0.0106447" ixy="0"  ixz="0" iyy="0.0106447" iyz="3.93411e-35" izz="0.0197122"/>
+    </inertial>
+  </link>
+
+  <joint type="continuous" name="left_wheel_hinge">
+    <origin xyz="0.096678 0.204146 -0.0808453" rpy="-1.5708 1.5708 0" />
+    <child link="left_wheel"/>
+    <parent link="chassis"/>
+    <axis xyz="0 0 1" rpy="0 0 0"/>
+    <limit effort="10000" velocity="1000"/>
+    <joint_properties damping="1.0" friction="1.0"/>
+  </joint>
+
+  <link name="right_wheel">
+    <!--origin xyz="0.1 -0.13 0.1" rpy="0 1.5707 1.5707"/-->
+    <collision name="collision">
+      <origin xyz="0 0 0.025" rpy="3.14159 -0 0" />
+      <geometry>
+        <mesh filename="package://diff_drive_bot/meshes/wheel.stl"/>
+        <!-- <cylinder radius="0.1" length="0.05"/> -->
+      </geometry>
+    </collision>
+    <visual name="right_wheel_visual">
+      <origin xyz="0 0 0.025" rpy="3.14159 -0 0" />
+      <geometry>
+        <!-- <cylinder radius="0.1" length="0.05"/> -->
+        <mesh filename="package://diff_drive_bot/meshes/wheel.stl"/>
+      </geometry>
+    </visual>
+    <inertial>
+      <origin xyz="-2.18305e-18 5.73556e-20 2.42861e-17" rpy="0 0 0"/>
+      <mass value="3.98738" />
+      <inertia
+        ixx="0.0106447" ixy="0"  ixz="0" iyy="0.0106447" iyz="-7.11867e-35" izz="0.0197122"/>
+    </inertial>
+  </link>
+
+  <joint type="continuous" name="right_wheel_hinge">
+    
+    <origin xyz="0.096678 -0.2037 -0.0808453" rpy="-1.5708 1.5708 0" />
+    <child link="right_wheel"/>
+    <parent link="chassis"/>
+    <axis xyz="0 0 1" rpy="0 0 0"/>
+    <limit effort="10000" velocity="1000"/>
+    <joint_properties damping="1.0" friction="1.0"/>
+  </joint>
+
+  
+<!-- ************************************************************************** -->
+  <link name="camera">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+
+    <inertial>
+      <mass value="${cameraMass}" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz=".25 0 0.24" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="camera"/>
+  </joint>
+
+  <joint name="hokuyo_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz=".25 0 0.44" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="hokuyo"/>
+  </joint>
+
+  <!-- Hokuyo Laser -->
+  <link name="hokuyo">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://diff_drive_bot/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+</robot>
